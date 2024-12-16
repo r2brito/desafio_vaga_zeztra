@@ -9,9 +9,15 @@ const transactionsController = new TransactionsController();
 const upload = multer(uploadConfig.multer);
 
 transactionRouter.post(
-  "/",
-  upload.single("file")
-  transactionsController.upload
+  "/upload",
+  upload.single("file"),
+  async (req, res, next) => {
+    try {
+      await transactionsController.upload(req, res);
+    } catch (err) {
+      next(err);
+    }
+  }
 );
 
 export default transactionRouter;

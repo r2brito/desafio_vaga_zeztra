@@ -4,21 +4,21 @@ import { BaseSchema } from '../../core/schemas/base.schema';
 export class ITransaction extends BaseSchema {
   readonly clientId: Types.ObjectId;
   readonly transactionId: string;
-  readonly date: Date;
-  readonly value: number;
+  readonly data: Date;
+  readonly valor: number;
 }
 
 const TransactionsSchema = new Schema<ITransaction>(
   {
-    clientId: { type: Types.ObjectId, required: true, ref: 'client' },
+    clientId: { type: Schema.Types.ObjectId, ref: 'client' },
     transactionId: { type: String, required: true, unique: true },
-    date: { type: Date, required: true },
-    value: { type: Number, required: true }
+    data: { type: Date, required: true },
+    valor: { type: Number, required: true }
   },
   {
     timestamps: true,
-    collection: 'Transaction',
+    collection: 'transactions',
   }
 )
 
-export const TransactionsModel = model<ITransaction>('Transaction', TransactionsSchema)
+export const Transactions = model<ITransaction>('transactions', TransactionsSchema)

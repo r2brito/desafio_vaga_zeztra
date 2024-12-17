@@ -23,7 +23,9 @@
     "paths": {
       "@modules/*": ["modules/*"],
       "@config/*": ["config/*"],
-      "@errors/*": ["errors/*"]
+      "@errors/*": ["errors/*"],
+      "@core/*": ["core/*"],
+      "@database/*": ["database/*"]
     }
   },
   "exclude": ["node_modules"],

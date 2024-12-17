@@ -12,7 +12,7 @@ interface RecordData {
 
 
 export class TransactionService {
-  public async readFile(file: Express.Multer.File): Promise<void> {
+  public static async readFile(file: Express.Multer.File): Promise<void> {
     const { path } = file;
     return new Promise((resolve, reject) => {
       const stream = fs.createReadStream(path, { encoding: 'utf8' });
@@ -51,14 +51,18 @@ export class TransactionService {
               });
             }
 
-            const transactionData = {
-              clientId: client._id,
-              valor,
-              data: new Date(data),
-              transactionId: id,
-            };
+            let transaction = await Transactions.findOne({ transactionId: id });
 
-            await Transactions.create(transactionData);
+            if (!transaction) {
+              const transactionData = {
+                clientId: client._id,
+                valor,
+                data: new Date(data),
+                transactionId: id,
+              };
+
+              await Transactions.create(transactionData);
+            }
           }
           resolve();
         } catch (error) {

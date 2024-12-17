@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as readline from "readline";
+import { performance } from 'perf_hooks';
 import { Client } from "@database/schemas/client.schema";
 import { Transactions } from "@database/schemas/transactions.schema";
 interface RecordData {
@@ -13,6 +14,7 @@ interface RecordData {
 
 export class TransactionService {
   public static async readFile(file: Express.Multer.File): Promise<void> {
+    const startTime = performance.now();
     const { path } = file;
     return new Promise((resolve, reject) => {
       const stream = fs.createReadStream(path, { encoding: 'utf8' });
@@ -64,6 +66,14 @@ export class TransactionService {
               await Transactions.create(transactionData);
             }
           }
+          const endTime = performance.now();
+
+          const timeInSeconds = ((endTime - startTime) / 1000).toFixed(2);
+
+          console.log(
+            `Tempo de processamento do arquivo: ${timeInSeconds} segundos`
+          );
+
           resolve();
         } catch (error) {
           console.error('Erro ao salvar no banco de dados:', error);

@@ -20,4 +20,15 @@ transactionRouter.post(
   }
 );
 
+transactionRouter.get(
+  "/",
+  async (req, res, next) => {
+    try {
+      await transactionsController.list(req, res);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 export default transactionRouter;

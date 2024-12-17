@@ -10,7 +10,7 @@ export class ITransaction extends BaseSchema {
 
 const TransactionsSchema = new Schema<ITransaction>(
   {
-    clientId: { type: Schema.Types.ObjectId, ref: 'client' },
+    clientId: { type: Schema.Types.ObjectId, ref: 'Client' },
     transactionId: { type: String, required: true, unique: true },
     data: { type: Date, required: true },
     valor: { type: Number, required: true }

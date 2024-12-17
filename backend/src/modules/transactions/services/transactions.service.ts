@@ -87,6 +87,71 @@ export class TransactionService {
       });
     });
   }
+
+  public static async getTransactions(page: number = 1,
+    limit: number = 10,
+    nome?: string,
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<any> {
+
+    try {
+      const query: any = {};
+
+      if (nome) {
+        const clients = await Client.find({
+          nome: new RegExp(nome, "i"),
+        });
+
+        if (clients.length === 0) {
+          return {
+            page,
+            limit,
+            totalPages: 0,
+            totalTransactions: 0,
+            transactions: [],
+            transactionsOnPage: 0,
+          };
+        }
+
+        const clientIds = clients.map((client) => client._id);
+        query.clientId = { $in: clientIds };
+      }
+
+      if (startDate || endDate) {
+        query.data = {};
+        if (startDate) query.data.$gte = startDate;
+        if (endDate) query.data.$lte = endDate;
+      }
+
+      const order = query.sortOrder === "desc" ? -1 : 1;
+
+      const transactions = await Transactions.find(query).sort({ [query.sortBy || "date"]: order }).populate(
+        {
+          path: 'clientId',
+          strictPopulate: false
+        }
+      )
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      const filteredTransactions = transactions.filter((transaction) => transaction.clientId);
+
+      const totalTransactions = await Transactions.countDocuments(query);
+
+      return {
+        page,
+        limit,
+        totalPages: Math.ceil(totalTransactions / limit),
+        total: totalTransactions,
+        transactions: filteredTransactions,
+        transactionsOnPage: filteredTransactions.length,
+      };
+    } catch (err) {
+      console.error('Erro ao buscar transações:', err);
+      throw new Error("Erro ao buscar transações no banco de dados");
+    }
+  }
 }
 
 export default TransactionService;

@@ -13,7 +13,7 @@ interface RecordData {
 
 
 export class TransactionService {
-  public static async readFile(file: Express.Multer.File): Promise<void> {
+  public static async readFile(file: Express.Multer.File): Promise<{ timeInSeconds: string }> {
     const startTime = performance.now();
     const { path } = file;
     return new Promise((resolve, reject) => {
@@ -74,7 +74,7 @@ export class TransactionService {
             `Tempo de processamento do arquivo: ${timeInSeconds} segundos`
           );
 
-          resolve();
+          resolve({ timeInSeconds });
         } catch (error) {
           console.error('Erro ao salvar no banco de dados:', error);
           reject(error);
